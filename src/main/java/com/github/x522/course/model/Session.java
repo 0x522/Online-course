@@ -1,5 +1,6 @@
 package com.github.x522.course.model;
 
+
 import javax.persistence.*;
 
 @Entity

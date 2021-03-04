@@ -1,13 +1,18 @@
 package com.github.x522.course.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import java.util.List;
 
 @Entity
-@Table(name = "user", schema = "public")
+@Table(name = "users", schema = "public")
 public class User extends BaseStatusEntity {
 
     private String username;
@@ -23,7 +28,7 @@ public class User extends BaseStatusEntity {
     }
 
     @Column(name = "encrypted_password")
-    @JsonIgnore
+    @JsonIgnore /*等价于transient关键字:使字段不参与序列化*/
     public String getEncryptedPassword() {
         return encryptedPassword;
     }

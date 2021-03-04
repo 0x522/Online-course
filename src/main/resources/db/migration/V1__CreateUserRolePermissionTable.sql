@@ -1,4 +1,4 @@
-CREATE TABLE "user"
+CREATE TABLE users
 (
     id                 serial PRIMARY KEY,
     username           VARCHAR(50) UNIQUE NOT NULL,
@@ -8,13 +8,15 @@ CREATE TABLE "user"
     status             VARCHAR(10)        NOT NULL DEFAULT 'OK'-- OK DELETED
 );
 -- 定义三个用户
-INSERT INTO "user"(id, username, encrypted_password)
-VALUES (1, 'Student1','');
-INSERT INTO "user"(id, username, encrypted_password)
-VALUES (2, 'Teacher2','');
-INSERT INTO "user"(id, username, encrypted_password)
-VALUES (3, 'Admin3','');
+INSERT INTO users(id, username, encrypted_password)
+VALUES (1, 'Student1', '');
+INSERT INTO users(id, username, encrypted_password)
+VALUES (2, 'Teacher2', '');
+INSERT INTO users(id, username, encrypted_password)
+VALUES (3, 'Admin3', '');
 
+alter
+sequence users_id_seq restart with 4;
 
 CREATE TABLE role
 (
@@ -32,6 +34,9 @@ VALUES (2, '老师');
 INSERT INTO role(id, name)
 VALUES (3, '管理员');
 
+alter
+sequence role_id_seq restart with 4;
+
 CREATE TABLE user_role
 (
     id         serial PRIMARY KEY,
@@ -48,6 +53,9 @@ INSERT INTO user_role(user_id, role_id)
 VALUES (2, 2);
 INSERT INTO user_role(user_id, role_id)
 VALUES (3, 3);
+
+alter
+sequence user_role_id_seq restart with 4;
 
 CREATE TABLE permission
 (

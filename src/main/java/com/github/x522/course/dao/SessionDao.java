@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface SessionDao extends CrudRepository<Session, Integer> {
     Optional<Session> findByCookie(String cookie);
+
+    void deleteByCookie(String cookie);
 }

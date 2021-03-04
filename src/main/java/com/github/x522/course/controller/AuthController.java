@@ -1,6 +1,7 @@
 package com.github.x522.course.controller;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import com.github.x522.course.annotation.UserRoleManagerService;
 import com.github.x522.course.configuration.Config;
 import com.github.x522.course.dao.SessionDao;
 import com.github.x522.course.dao.UserDao;
@@ -10,13 +11,20 @@ import com.github.x522.course.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
+import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import static com.github.x522.course.configuration.UserInterceptor.COOKIE_NAME;
@@ -81,15 +89,17 @@ public class AuthController {
     public User register(@RequestParam("username") String username,
                          @RequestParam("password") String password,
                          HttpServletResponse response) {
-        if (StringUtils.hasText(username) || username.length() > 20 || username.length() < 6) {
+        if (!StringUtils.hasText(username) || username.length() > 20 || username.length() < 6) {
             throw new HttpException(400, "用户名必须在6到20之间");
         }
-        if (StringUtils.hasText(password)) {
+        if (!StringUtils.hasText(password)) {
             throw new HttpException(400, "密码不能为空");
         }
 
         User user = new User();
         user.setUsername(username);
+        user.setUpdatedAt(new Date());
+        user.setCreatedAt(new Date());
         // 1 数据库绝对不能明文存密码
         // 2 不要自己设计加密算法
         user.setEncryptedPassword(hasher.hashToString(12, password.toCharArray()));
@@ -158,7 +168,6 @@ public class AuthController {
                 session.setCookie(cookie);
                 session.setUser(user);
                 sessionDao.save(session);
-
 
                 response.addCookie(new Cookie(COOKIE_NAME, cookie));
                 return user;
@@ -248,5 +257,13 @@ public class AuthController {
         cookie.setMaxAge(0);
         response.addCookie(cookie);
         response.setStatus(204);
+    }
+
+    @Autowired
+    UserRoleManagerService userRoleManagerService;
+
+    @RequestMapping("/admin/users")
+    public List<User> getAllUsers() {
+        return userRoleManagerService.getAllUsers();
     }
 }
